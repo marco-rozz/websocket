@@ -14,7 +14,7 @@ websocket is a minimal and idiomatic WebSocket library for Go.
 ## Install
 
 ```bash
-go get nhooyr.io/websocket
+go get github.com/marco-rozz/websocket
 ```
 
 ## Highlights
