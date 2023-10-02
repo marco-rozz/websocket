@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/marco-rozz/websocket"
 	"github.com/marco-rozz/websocket/internal/bpool"
@@ -58,16 +58,17 @@ func Write(ctx context.Context, c *websocket.Conn, v proto.Message) error {
 func write(ctx context.Context, c *websocket.Conn, v proto.Message) (err error) {
 	defer errd.Wrap(&err, "failed to write protobuf message")
 
-	b := bpool.Get()
-	pb := proto.NewBuffer(b.Bytes())
+	//b := bpool.Get()
+	//pb := proto.NewBuffer(b.Bytes())
+	pb, err := proto.Marshal(v)
 	defer func() {
-		bpool.Put(bytes.NewBuffer(pb.Bytes()))
+		bpool.Put(bytes.NewBuffer(pb))
 	}()
 
-	err = pb.Marshal(v)
+	//err = pb.Marshal(v)
 	if err != nil {
 		return fmt.Errorf("failed to marshal protobuf: %w", err)
 	}
 
-	return c.Write(ctx, websocket.MessageBinary, pb.Bytes())
+	return c.Write(ctx, websocket.MessageBinary, pb)
 }
